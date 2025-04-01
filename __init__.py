@@ -50,7 +50,7 @@ def commits():
         try:
             author = commit['commit']['author']
             name = author['name']
-            if name == MON_NOM_GITHUB:
+            if name == slngithh:
                 date_str = author['date']
                 dt = datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%SZ')
                 minute = dt.minute
