@@ -4,9 +4,7 @@ from flask import json
 from datetime import datetime
 from urllib.request import urlopen
 import sqlite3
-import matplotlib.pyplot as plt
-import requests
-                                                                                                                                       
+                                                                                                                 
 app = Flask(__name__)                                                                                                                  
                                                                                                                                        
 @app.route('/')
@@ -50,15 +48,18 @@ def commits():
         date_object = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ')
         commit_minutes.append(date_object.minute)
     
-    # Create a graph of commit activity minute by minute
-    plt.hist(commit_minutes, bins=range(0, 61), edgecolor='black')
-    plt.xlabel('Minutes')
-    plt.ylabel('Number of Commits')
-    plt.title('Commits per Minute')
-    plt.savefig('static/commits_per_minute.png')
-    plt.close()
-
-    return render_template('commits.html')
+    # Count commits per minute
+    commit_count_per_minute = [0] * 60
+    for minute in commit_minutes:
+        commit_count_per_minute[minute] += 1
+    
+    # Create HTML content for the graph
+    graph_html = "<h1>Commits per Minute</h1><table border='1'><tr><th>Minute</th><th>Number of Commits</th></tr>"
+    for minute, count in enumerate(commit_count_per_minute):
+        graph_html += f"<tr><td>{minute}</td><td>{count}</td></tr>"
+    graph_html += "</table>"
+    
+    return graph_html
 
 @app.route('/extract-minutes/<date_string>')
 def extract_minutes(date_string):
