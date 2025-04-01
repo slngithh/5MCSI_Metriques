@@ -1,0 +1,54 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Évolution des Températures à Tawarano</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  </head>
+  <body>
+    <div id="chart_div"></div>
+    <script>
+      google.charts.load('current', { packages: ['corechart', 'bar'] });
+      google.charts.setOnLoadCallback(drawChart);
+      
+      function drawChart() {
+        // Fonction pour dessiner l'histogramme
+        function drawTemperatureChart(data) {
+          var dataTable = new google.visualization.DataTable();
+          dataTable.addColumn('string', 'Date');  // Colonne pour les dates
+          dataTable.addColumn('number', 'Température');  // Colonne pour les températures
+
+          // Parcourir les résultats de l'API pour ajouter les lignes de données
+          data.results.forEach(entry => {
+            var date = new Date(entry.Jour * 1000);  // Conversion de la date Unix en date lisible
+            dataTable.addRow([date.toLocaleDateString(), entry.temp]);
+          });
+
+          // Options du graphique
+          var options = {
+            title: 'Évolution des températures de la ville de Tawarano',
+            chartArea: { width: '50%' },  // Réduit la taille de la zone du graphique
+            hAxis: {
+              title: 'Température',
+              minValue: 0
+            },
+            vAxis: {
+              title: 'Date'
+            },
+            colors: ['#1b9e77']  // Couleur des colonnes
+          };
+
+          // Création du graphique
+          var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+          chart.draw(dataTable, options);
+        }
+
+        // Récupérer les données de l'API /tawarano/
+        fetch('/tawarano/')
+          .then(response => response.json())
+          .then(data => {
+            drawTemperatureChart(data);
+          });
+      }
+    </script>
+  </body>
+</html>
