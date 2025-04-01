@@ -35,6 +35,34 @@ def mongraphique():
 def histo():
     return render_template('histogramme.html')
 
+@app.route('/commits/')
+def commits():
+    # Appel API GitHub
+    url = "https://api.github.com/repos/slngithh/5MCSI_Metriques/commits"
+    response = requests.get(url)
+    data = response.json()
+
+    # Extraction des minutes
+    minute_counts = Counter()
+    for commit in data:
+        try:
+            date_str = commit['commit']['author']['date']
+            dt = datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%SZ')
+            minute_counts[dt.minute] += 1
+        except:
+            continue
+
+    # Générer des listes ordonnées (minutes 0 à 59)
+    minutes = list(range(60))
+    counts = [minute_counts[m] for m in minutes]
+
+    return render_template('commits.html', minutes=minutes, counts=counts)
+
+@app.route('/extract-minutes/<date_string>')
+def extract_minutes(date_string):
+    date_object = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ')
+    minutes = date_object.minute
+    return jsonify({'minutes': minutes})
 
 if __name__ == "__main__":
   app.run(debug=True)
