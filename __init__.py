@@ -61,6 +61,7 @@ def show_commit_graph():
             minute_counts[minute] += 1
         except Exception as e:
             continue  # En cas d'erreur sur un commit, on saute
+          
     minutes = list(range(60))
     counts = [minute_counts.get(minute, 0) for minute in minutes]
 
