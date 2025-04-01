@@ -4,6 +4,8 @@ from flask import json
 from datetime import datetime
 from urllib.request import urlopen
 import sqlite3
+import matplotlib.pyplot as plt
+import requests
                                                                                                                                        
 app = Flask(__name__)                                                                                                                  
                                                                                                                                        
@@ -35,34 +37,35 @@ def mongraphique():
 def histo():
     return render_template('histogramme.html')
 
-@app.route('/commits/')
+@app.route('/commits')
 def commits():
-    # Appel API GitHub
-    url = "https://api.github.com/repos/slngithh/5MCSI_Metriques/commits"
-    response = requests.get(url)
-    data = response.json()
+    # Get commits data from GitHub API
+    response = requests.get('https://api.github.com/repos/slngithh/5MCSI_Metriques/commits')
+    commits_data = response.json()
 
-    # Extraction des minutes
-    minute_counts = Counter()
-    for commit in data:
-        try:
-            date_str = commit['commit']['author']['date']
-            dt = datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%SZ')
-            minute_counts[dt.minute] += 1
-        except:
-            continue
+    # Process commits data to get commit minutes
+    commit_minutes = []
+    for commit in commits_data:
+        date_string = commit['commit']['author']['date']
+        date_object = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ')
+        commit_minutes.append(date_object.minute)
+    
+    # Create a graph of commit activity minute by minute
+    plt.hist(commit_minutes, bins=range(0, 61), edgecolor='black')
+    plt.xlabel('Minutes')
+    plt.ylabel('Number of Commits')
+    plt.title('Commits per Minute')
+    plt.savefig('static/commits_per_minute.png')
+    plt.close()
 
-    # Générer des listes ordonnées (minutes 0 à 59)
-    minutes = list(range(60))
-    counts = [minute_counts[m] for m in minutes]
-
-    return render_template('commits.html', minutes=minutes, counts=counts)
+    return render_template('commits.html')
 
 @app.route('/extract-minutes/<date_string>')
 def extract_minutes(date_string):
     date_object = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ')
     minutes = date_object.minute
     return jsonify({'minutes': minutes})
+
 
 if __name__ == "__main__":
   app.run(debug=True)
