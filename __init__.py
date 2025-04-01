@@ -38,7 +38,7 @@ def histo():
 @app.route('/commits/')
 def commits():
     # Appel de l'API GitHub (sans 'requests', on utilise urlopen)
-    url = "https://api.github.com/repos/OpenRSI/5MCSI_Metriques/commits"
+    url = "https://api.github.com/repos/slngithh/5MCSI_Metriques/commits"
     with urlopen(url) as response:
         data = json.loads(response.read())
 
