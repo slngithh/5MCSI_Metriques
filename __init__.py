@@ -11,7 +11,7 @@ app = Flask(__name__)
 def hello_world():
     return render_template('hello.html')
 
-@app.route("/contact/")
+@app.route('/contact/')
 def MaPremiereAPI():
     return "<h2>Ma page de contact</h2>"
 
@@ -27,13 +27,13 @@ def meteo():
         results.append({'Jour': dt_value, 'temp': temp_day_value})
     return jsonify(results=results)
 
-@app.route("/rapport/")
+@app.route('/rapport/')
 def mongraphique():
-    return render_template("graphique.html")
+    return render_template('graphique.html')
 
-@app.route("/histogramme/")
-def mongraphique():
-    return render_template("histogramme.html")
+@app.route('/histogramme/')
+def histo():
+    return render_template('histogramme.html')
 
 
 if __name__ == "__main__":
