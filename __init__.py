@@ -35,38 +35,37 @@ def mongraphique():
 def histo():
     return render_template('histogramme.html')
 
-@app.route('/commits')
+@app.route('/commits/')
 def commits():
-    # Get commits data from GitHub API
-    response = requests.get('https://api.github.com/repos/slngithh/5MCSI_Metriques/commits')
-    commits_data = response.json()
+    # Appel de l'API GitHub (sans 'requests', on utilise urlopen)
+    url = "https://api.github.com/repos/OpenRSI/5MCSI_Metriques/commits"
+    with urlopen(url) as response:
+        data = json.loads(response.read())
 
-    # Process commits data to get commit minutes
-    commit_minutes = []
-    for commit in commits_data:
-        date_string = commit['commit']['author']['date']
-        date_object = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ')
-        commit_minutes.append(date_object.minute)
-    
-    # Count commits per minute
-    commit_count_per_minute = [0] * 60
-    for minute in commit_minutes:
-        commit_count_per_minute[minute] += 1
-    
-    # Create HTML content for the graph
-    graph_html = "<h1>Commits per Minute</h1><table border='1'><tr><th>Minute</th><th>Number of Commits</th></tr>"
-    for minute, count in enumerate(commit_count_per_minute):
-        graph_html += f"<tr><td>{minute}</td><td>{count}</td></tr>"
-    graph_html += "</table>"
-    
-    return graph_html
+    # Initialisation : liste de 60 minutes
+    minute_counts = [0] * 60
+
+    # Traitement des commits
+    for commit in data:
+        try:
+            author = commit['commit']['author']
+            name = author['name']
+            if name == MON_NOM_GITHUB:
+                date_str = author['date']
+                dt = datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%SZ')
+                minute = dt.minute
+                minute_counts[minute] += 1
+        except Exception:
+            continue
+
+    # On passe la liste minute_counts au template
+    return render_template('commits.html', counts=minute_counts)
 
 @app.route('/extract-minutes/<date_string>')
 def extract_minutes(date_string):
     date_object = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ')
     minutes = date_object.minute
     return jsonify({'minutes': minutes})
-
 
 if __name__ == "__main__":
   app.run(debug=True)
