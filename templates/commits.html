@@ -1,10 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Commits per Minute</title>
+    <title>Commits par minute</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <h1>Commits per Minute</h1>
-    <img src="{{ url_for('static', filename='commits_per_minute.png') }}" alt="Commits per Minute Graph">
+    <h2>Vos commits par minute</h2>
+    <canvas id="chart" width="600" height="400"></canvas>
+
+    <script>
+        const data = {{ counts|safe }};
+        const labels = Array.from({length: 60}, (_, i) => i);
+
+        const ctx = document.getElementById('chart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Commits/minute',
+                    data: data
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Minute (0-59)' }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: 'Nombre de commits' }
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 </html>
