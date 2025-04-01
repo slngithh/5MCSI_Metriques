@@ -8,7 +8,8 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding: 0;
-      background: linear-gradient(to bottom, #cce0f5, #e6f2ff); /* ciel doux */
+      background: url('https://www.transparenttextures.com/patterns/clouds.png') repeat, linear-gradient(to bottom, #cce0f5, #e6f2ff);
+      background-size: auto;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -16,7 +17,7 @@
     }
 
     .form-container {
-      background-color: #ffffff;
+      background-color: rgba(255, 255, 255, 0.95);
       padding: 40px;
       border-radius: 12px;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
@@ -76,9 +77,10 @@
 <body>
 
   <div class="form-container">
-    <h2>Contactez moi!</h2>
+    <h2>Contactez l'équipe météo</h2>
     <p class="description">
-      Laissez moi un message et je vous répondrais rapidement.
+      Une question sur les prévisions ? Une remarque sur notre site ou une alerte météo à partager ?<br>
+      Laissez-nous un message et nous vous répondrons rapidement.
     </p>
 
     <form>
