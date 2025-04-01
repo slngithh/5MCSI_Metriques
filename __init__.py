@@ -48,8 +48,8 @@ def show_commit_graph():
     url = "https://api.github.com/repos/slngithh/5MCSI_Metriques/commits"
     response = requests.get(url)
 
-    if response.status_code != 200:
-        return f"Erreur de récupération des données: {response.status_code}", 500
+    #if response.status_code != 200:
+     #   return f"Erreur de récupération des données: {response.status_code}", 500
 
     commits = response.json()
     minute_counts = Counter()
